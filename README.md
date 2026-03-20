@@ -49,7 +49,24 @@ python app.py
 
 ## 🚀 免费部署指南
 
-### 方案一：Render（推荐）
+### 方案一：Streamlit Cloud（推荐）
+
+**优点**: 完全免费、专为Streamlit设计、部署简单
+
+1. 注册 [Streamlit Cloud](https://streamlit.io/cloud) 账号
+2. 连接你的 GitHub 仓库
+3. 选择仓库并部署
+4. **重要**: Streamlit Cloud 会自动识别 `streamlit_app.py` 文件
+5. 部署完成后获得免费网址：`https://你的应用名.streamlit.app`
+
+**注意事项**:
+- 确保主文件名为 `streamlit_app.py`
+- 确保 `requirements.txt` 中包含 `streamlit` 依赖
+- 首次部署可能需要 3-5 分钟下载语言模型
+
+---
+
+### 方案二：Render（Flask版本）
 
 **优点**: 完全免费、自动部署、支持Python
 
@@ -57,9 +74,15 @@ python app.py
 2. 连接你的 GitHub 仓库
 3. 创建新的 Web Service
 4. 配置：
+   - **Runtime**: Python 3
    - **Build Command**: `pip install -r requirements.txt && python -m spacy download en_core_web_sm && python -m spacy download zh_core_web_sm`
    - **Start Command**: `python app.py`
 5. 部署完成后获得免费网址：`https://你的应用名.onrender.com`
+
+**注意事项**:
+- 确保 `runtime.txt` 中指定了 Python 3.11
+- 确保 `requirements.txt` 中指定了兼容的库版本
+- 首次部署可能需要 3-5 分钟下载语言模型
 
 ---
 
@@ -153,14 +176,35 @@ git push -u origin main
 
 ## 常见问题
 
-### 问题1：模型下载失败
+### 问题1：Python 3.14 兼容性问题
+**错误信息**: `pydantic.v1.errors.ConfigError: unable to infer type for attribute`
+
+**原因**: spaCy 与 Python 3.14 不兼容
+
+**解决方案**: 
+- 确保 `runtime.txt` 中指定 `python-3.11.0`
+- 确保 `requirements.txt` 中指定兼容版本：
+  ```
+  flask==3.0.0
+  spacy==3.7.4
+  pydantic==2.5.0
+  ```
+
+### 问题2：Streamlit Cloud 部署失败
+**原因**: 本项目是 Flask 应用，不是 Streamlit 应用
+
+**解决方案**: 
+- **不要**在 Streamlit Cloud 上部署
+- 使用 **Render**、**Railway** 或 **PythonAnywhere**
+
+### 问题3：模型下载失败
 **解决方案**：手动下载模型
 ```bash
 python -m spacy download en_core_web_sm
 python -m spacy download zh_core_web_sm
 ```
 
-### 问题2：端口被占用
+### 问题4：端口被占用
 **解决方案**：修改端口号
 ```python
 app.run(debug=False, host='0.0.0.0', port=5001)
